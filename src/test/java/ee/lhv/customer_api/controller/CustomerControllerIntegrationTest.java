@@ -64,12 +64,13 @@ class CustomerControllerIntegrationTest {
         CustomerRequest request = new CustomerRequest("", "", "invalid-email");
 
         mockMvc.perform(post("/customers")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors.firstName").exists())
-                .andExpect(jsonPath("$.errors.lastName").exists())
-                .andExpect(jsonPath("$.errors.email").exists());
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.errors.firstName").value("First name is required"))
+                .andExpect(jsonPath("$.errors.lastName").value("Last name is required"))
+                .andExpect(jsonPath("$.errors.email").value("Email should be valid"));
     }
 
     @Test
