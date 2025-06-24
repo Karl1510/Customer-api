@@ -1,11 +1,11 @@
-package ee.lhv.customer_api.service;
+package ee.lhv.customer.api.service;
 
-import ee.lhv.customer_api.dto.CustomerRequest;
-import ee.lhv.customer_api.dto.CustomerResponse;
-import ee.lhv.customer_api.entity.Customer;
-import ee.lhv.customer_api.exception.CustomerNotFoundException;
-import ee.lhv.customer_api.exception.EmailAlreadyExistsException;
-import ee.lhv.customer_api.repository.CustomerRepository;
+import ee.lhv.customer.api.dto.CustomerRequest;
+import ee.lhv.customer.api.dto.CustomerResponse;
+import ee.lhv.customer.api.entity.Customer;
+import ee.lhv.customer.api.exception.CustomerNotFoundException;
+import ee.lhv.customer.api.exception.EmailAlreadyExistsException;
+import ee.lhv.customer.api.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,8 +24,7 @@ public class CustomerService {
     
     public CustomerResponse createCustomer(CustomerRequest request) {
         log.debug("Creating customer with email: {}", request.getEmail());
-        
-        // Check if email already exists
+
         if (customerRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException(request.getEmail());
         }
@@ -65,8 +64,7 @@ public class CustomerService {
         
         Customer customer = customerRepository.findById(id)
             .orElseThrow(() -> new CustomerNotFoundException(id));
-        
-        // Check if email is being changed and if new email already exists
+
         if (!customer.getEmail().equals(request.getEmail()) && 
             customerRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException(request.getEmail());

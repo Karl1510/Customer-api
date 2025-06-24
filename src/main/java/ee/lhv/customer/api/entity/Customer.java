@@ -1,4 +1,4 @@
-package ee.lhv.customer_api.entity;
+package ee.lhv.customer.api.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -42,8 +42,7 @@ public class Customer {
     @UpdateTimestamp
     @Column(name = "modified_dtime", nullable = false)
     private LocalDateTime modifiedDtime;
-    
-    // Constructor without id and timestamps (for creating new customers)
+
     public Customer(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;

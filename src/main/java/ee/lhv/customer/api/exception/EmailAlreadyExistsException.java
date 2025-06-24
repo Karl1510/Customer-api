@@ -1,4 +1,4 @@
-package ee.lhv.customer_api.exception;
+package ee.lhv.customer.api.exception;
 
 public class EmailAlreadyExistsException extends RuntimeException {
     

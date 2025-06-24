@@ -1,4 +1,4 @@
-package ee.lhv.customer_api.dto;
+package ee.lhv.customer.api.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

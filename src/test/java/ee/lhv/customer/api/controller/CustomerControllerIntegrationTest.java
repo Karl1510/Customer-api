@@ -1,9 +1,9 @@
-package ee.lhv.customer_api.controller;
+package ee.lhv.customer.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ee.lhv.customer_api.dto.CustomerRequest;
-import ee.lhv.customer_api.entity.Customer;
-import ee.lhv.customer_api.repository.CustomerRepository;
+import ee.lhv.customer.api.dto.CustomerRequest;
+import ee.lhv.customer.api.entity.Customer;
+import ee.lhv.customer.api.repository.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,15 +45,15 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void createCustomer_Success() throws Exception {
-        CustomerRequest request = new CustomerRequest("John", "Doe", "john.doe@example.com");
+        CustomerRequest request = new CustomerRequest("Test", "Kasutaja", "test.kasutaja@example.com");
 
         mockMvc.perform(post("/customers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.email").value("john.doe@example.com"))
+                .andExpect(jsonPath("$.firstName").value("Test"))
+                .andExpect(jsonPath("$.lastName").value("Kasutaja"))
+                .andExpect(jsonPath("$.email").value("test.kasutaja@example.com"))
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.createdDtime").exists())
                 .andExpect(jsonPath("$.modifiedDtime").exists());
@@ -75,12 +75,10 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void createCustomer_EmailAlreadyExists() throws Exception {
-        // Create first customer
-        Customer existingCustomer = new Customer("Jane", "Smith", "test@example.com");
+        Customer existingCustomer = new Customer("Test", "Kasutaja", "test@example.com");
         customerRepository.save(existingCustomer);
 
-        // Try to create another customer with same email
-        CustomerRequest request = new CustomerRequest("John", "Doe", "test@example.com");
+        CustomerRequest request = new CustomerRequest("Test2", "Kasutaja2", "test@example.com");
 
         mockMvc.perform(post("/customers")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -91,15 +89,15 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void getCustomerById_Success() throws Exception {
-        Customer customer = new Customer("John", "Doe", "john.doe@example.com");
+        Customer customer = new Customer("Test", "Kasutaja", "test.kasutaja@example.com");
         Customer savedCustomer = customerRepository.save(customer);
 
         mockMvc.perform(get("/customers/{id}", savedCustomer.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(savedCustomer.getId()))
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.email").value("john.doe@example.com"));
+                .andExpect(jsonPath("$.firstName").value("Test"))
+                .andExpect(jsonPath("$.lastName").value("Kasutaja"))
+                .andExpect(jsonPath("$.email").value("test.kasutaja@example.com"));
     }
 
     @Test
@@ -111,38 +109,38 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void getAllCustomers_Success() throws Exception {
-        Customer customer1 = new Customer("John", "Doe", "john.doe@example.com");
-        Customer customer2 = new Customer("Jane", "Smith", "jane.smith@example.com");
+        Customer customer1 = new Customer("Test", "Kasutaja", "test.kasutaja@example.com");
+        Customer customer2 = new Customer("Test2", "Kasutaja2", "test2.kasutaja2@example.com");
         customerRepository.save(customer1);
         customerRepository.save(customer2);
 
         mockMvc.perform(get("/customers"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].firstName").value("John"))
-                .andExpect(jsonPath("$[1].firstName").value("Jane"));
+                .andExpect(jsonPath("$[0].firstName").value("Test"))
+                .andExpect(jsonPath("$[1].firstName").value("Test2"));
     }
 
     @Test
     void updateCustomer_Success() throws Exception {
-        Customer customer = new Customer("John", "Doe", "john.doe@example.com");
+        Customer customer = new Customer("Test", "Kasutaja", "test.kasutaja@example.com");
         Customer savedCustomer = customerRepository.save(customer);
 
-        CustomerRequest updateRequest = new CustomerRequest("John", "Updated", "john.updated@example.com");
+        CustomerRequest updateRequest = new CustomerRequest("Test", "Updated", "test.updated@example.com");
 
         mockMvc.perform(put("/customers/{id}", savedCustomer.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(savedCustomer.getId()))
-                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.firstName").value("Test"))
                 .andExpect(jsonPath("$.lastName").value("Updated"))
-                .andExpect(jsonPath("$.email").value("john.updated@example.com"));
+                .andExpect(jsonPath("$.email").value("test.updated@example.com"));
     }
 
     @Test
     void updateCustomer_NotFound() throws Exception {
-        CustomerRequest updateRequest = new CustomerRequest("John", "Updated", "john.updated@example.com");
+        CustomerRequest updateRequest = new CustomerRequest("Test", "Updated", "test.updated@example.com");
 
         mockMvc.perform(put("/customers/{id}", 999L)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -153,7 +151,7 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void deleteCustomer_Success() throws Exception {
-        Customer customer = new Customer("John", "Doe", "john.doe@example.com");
+        Customer customer = new Customer("Test", "Kasutaja", "test.kasutaja@example.com");
         Customer savedCustomer = customerRepository.save(customer);
 
         mockMvc.perform(delete("/customers/{id}", savedCustomer.getId()))
